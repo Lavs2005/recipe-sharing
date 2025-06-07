@@ -64,7 +64,7 @@ A responsive and visually appealing web application to share, search, filter, an
 ---
 ## Live Demo
 Check out the live project here:
-
+https://lavs2005.github.io/recipe-sharing/
 
 ---
 ## Screenshots
