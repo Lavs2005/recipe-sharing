@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Recipe Sharing Website</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+
+<style>
+  body {
+    background: linear-gradient(135deg, #fff8e7, #f0e5d8); /* very soft cream-beige */
+    color: #4a4a4a;
+  }
+
+  header {
+    background: linear-gradient(90deg, #a1c9f1, #f7d6c1); /* soft warm peach */
+    box-shadow: 0 4px 10px rgba(247, 214, 193, 0.6);
+    color: #6a4f4b;
+  }
+
+  section.bg-white.text-center.py-12 {
+    background: linear-gradient(135deg, #fff8e7, #b5d8d9); /* pastel blue to pastel teal */
+    color: #2c3e50;
+    box-shadow: 0 8px 20px rgba(161, 201, 241, 0.4);
+    border-radius: 0 0 30px 30px;
+  }
+
+  nav button {
+    background-color: transparent;
+    color: #6a4f4b;
+    font-weight: 600;
+    transition: background-color 0.3s ease, transform 0.3s ease, color 0.3s ease;
+    border-radius: 8px;
+    padding: 0.3rem 0.8rem;
+  }
+
+  nav button:hover {
+    background-color: #f8c291; /* light peach */
+    color: #5b3a29;
+    transform: scale(1.05);
+  }
+
+  #category-section button {
+    background-color: transparent;
+    color: #52796f;
+    font-weight: 600;
+    border-radius: 8px;
+    padding: 0.4rem 1rem;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease, color 0.3s ease;
+  }
+
+  #category-section button:hover {
+    background-color: #a7c7e7; /* soft pastel blue */
+    color: #34515e;
+    box-shadow: 0 4px 10px rgba(167, 199, 231, 0.6);
+  }
+
+  #recipe-container > div {
+    background: #ffffffcc; /* white with some transparency for softness */
+    border-radius: 12px;
+    box-shadow: 0 6px 15px rgba(116, 114, 114, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+    padding: 1rem;
+  }
+
+  #recipe-container > div:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 10px 20px rgba(98, 128, 176, 0.25);
+  }
+
+  #formPopup > div {
+    border-radius: 15px;
+    box-shadow: 0 12px 24px rgba(98, 128, 176, 0.25);
+  }
+
+  #formPopup button {
+    background: linear-gradient(90deg, #92a8d1, #a7c7e7); /* soft pastel blues */
+    transition: background-color 0.3s ease;
+  }
+
+  #formPopup button:hover {
+    background: #6b89b0;
+  }
+
+  input, select {
+    border: 2px solid #a7c7e7;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    background: #fefefe;
+  }
+
+  input:focus, select:focus {
+    border-color: #92a8d1;
+    box-shadow: 0 0 8px #92a8d1;
+    outline: none;
+    background: #fff;
+  }
+
+  /* Profile section */
+  #profile {
+    background: linear-gradient(135deg, #94c4f5, #8fd3bf); /* soft mint greens */
+    color: #2e4a3d;
+    border-radius: 12px;
+    box-shadow: 0 6px 15px rgba(48, 111, 90, 0.35);
+    padding: 1.5rem;
+  }
+</style>
+
+</head>
+<body class="bg-gray-100 text-gray-800">
+
+  <!-- Navbar -->
+  <header class="text-white p-4 flex justify-between items-center">
+    <h1 class="text-2xl font-bold">🍽️ RecipeShare</h1>
+    <nav class="space-x-4">
+      <button onclick="renderRecipes()" class="hover:underline">Home</button>
+      <button onclick="document.getElementById('category-section').scrollIntoView({behavior:'smooth'})" class="hover:underline">Categories</button>
+      <button onclick="openForm()" class="hover:underline">Add Recipe</button>
+      <button onclick="showProfile()" class="hover:underline">Profile</button>
+    </nav>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="bg-white text-center py-12">
+    <h2 class="text-4xl font-bold mb-2">Discover & Share Delicious Recipes</h2>
+    <p class="text-gray-600">Find inspiration or contribute your own culinary masterpieces.</p>
+  </section>
+
+  <!-- Search -->
+  <section class="p-4 text-center">
+    <input id="search" oninput="searchRecipes()" type="text" placeholder="Search recipes or ingredients..." class="w-full max-w-md p-2 border rounded shadow-sm" />
+  </section>
+
+  <!-- Category Filters -->
+  <section id="category-section" class="p-4 text-center space-x-2">
+    <button onclick="filterCategory('All')" class="px-3 py-1 bg-blue-600 text-white rounded">All</button>
+    <button onclick="filterCategory('Breakfast')" class="px-3 py-1 bg-yellow-500 text-white rounded">Breakfast</button>
+    <button onclick="filterCategory('Lunch')" class="px-3 py-1 bg-green-600 text-white rounded">Lunch</button>
+    <button onclick="filterCategory('Dinner')" class="px-3 py-1 bg-purple-600 text-white rounded">Dinner</button>
+    <button onclick="filterCategory('Dessert')" class="px-3 py-1 bg-pink-500 text-white rounded">Dessert</button>
+  </section>
+
+  <!-- Recipes Grid -->
+  <section class="p-4 grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3" id="recipe-container"></section>
+
+  <!-- Add Recipe Popup -->
+  <div id="formPopup" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
+    <div class="bg-white p-6 rounded shadow-lg w-full max-w-md relative">
+      <button onclick="closeForm()" class="absolute top-2 right-2 text-gray-500 hover:text-red-600 text-xl">&times;</button>
+      <h2 class="text-2xl font-bold mb-4">Add Your Recipe</h2>
+      <input id="name" type="text" placeholder="Recipe Name" class="block w-full p-2 border mb-2 rounded" />
+      <select id="category" class="block w-full p-2 border mb-2 rounded">
+        <option value="">Select Category</option>
+        <option value="Breakfast">Breakfast</option>
+        <option value="Lunch">Lunch</option>
+        <option value="Dinner">Dinner</option>
+        <option value="Dessert">Dessert</option>
+      </select>
+      <input id="ingredients" type="text" placeholder="Ingredients (comma separated)" class="block w-full p-2 border mb-2 rounded" />
+      <input id="rating" type="number" min="1" max="5" placeholder="Rating (1-5)" class="block w-full p-2 border mb-2 rounded" />
+      <input id="imageURL" type="url" placeholder="Image URL (e.g. https://example.com/image.jpg)" class="block w-full p-2 border mb-4 rounded" />
+      <button onclick="addRecipe()" class="bg-blue-600 text-white px-4 py-2 rounded w-full">Submit</button>
+    </div>
+  </div>
+
+  <!-- Profile Section -->
+  <section id="profile" class="bg-white mt-10 p-6 text-center hidden">
+    <h2 class="text-2xl font-bold mb-2">👤 Your Profile</h2>
+    <p class="text-gray-100">Total Recipes Shared: <span id="recipe-count">0</span></p>
+  </section>
+
+  <script src="script.js"></script>
+</body>
+</html>
