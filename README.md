@@ -68,3 +68,11 @@ Check out the live project here:
 
 ---
 ## Screenshots
+![Homepage](screenshots/img1.png)  
+*Browse and filter recipes easily.*
+
+![Add Recipe Form](screenshots/img2.png)  
+*Add new recipes with ease.*
+
+![Profile Section](screenshots/img3.png)  
+*View user profile details.*
